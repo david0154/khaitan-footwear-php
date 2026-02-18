@@ -4,8 +4,20 @@ require_once 'includes/header.php';
 // Get banners
 $banners = $pdo->query("SELECT * FROM banners WHERE status = 'active' ORDER BY order_num LIMIT 1")->fetchAll();
 
-// Get categories
-$categories = $pdo->query("SELECT * FROM categories WHERE status = 'active' ORDER BY order_num")->fetchAll();
+// Get categories with a sample product image from each
+$categoriesQuery = "
+    SELECT c.*, 
+           (SELECT p.primary_image 
+            FROM products p 
+            WHERE p.category_id = c.id 
+            AND p.status = 'active' 
+            AND p.primary_image IS NOT NULL 
+            LIMIT 1) as sample_image
+    FROM categories c 
+    WHERE c.status = 'active' 
+    ORDER BY c.order_num
+";
+$categories = $pdo->query($categoriesQuery)->fetchAll();
 
 // Get featured products
 $products = $pdo->query("SELECT p.*, c.name as category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE p.is_featured = 1 AND p.status = 'active' LIMIT 8")->fetchAll();
@@ -117,6 +129,22 @@ $hero_button_link = $settings['hero_button_link'] ?? 'products.php';
                     <div class="category-slide flex-shrink-0 px-4" style="width: 25%;">
                         <a href="products.php?category=<?= $cat['slug'] ?>" class="group block">
                             <div class="relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition transform hover:-translate-y-2">
+                                <?php if ($cat['sample_image']): ?>
+                                <!-- Show actual product image from category -->
+                                <div class="aspect-square bg-white relative">
+                                    <img src="uploads/products/<?= htmlspecialchars($cat['sample_image']) ?>" 
+                                         alt="<?= htmlspecialchars($cat['name']) ?>" 
+                                         class="w-full h-full object-contain p-6">
+                                    <!-- Overlay with category info -->
+                                    <div class="absolute inset-0 bg-gradient-to-t from-red-600 via-red-600/50 to-transparent opacity-90 flex items-end p-6">
+                                        <div class="text-white w-full">
+                                            <h3 class="text-2xl font-bold mb-2"><?= htmlspecialchars($cat['name']) ?></h3>
+                                            <p class="text-red-100 text-sm"><?= htmlspecialchars($cat['description']) ?></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php else: ?>
+                                <!-- Fallback to gradient if no image -->
                                 <div class="aspect-square bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center p-8">
                                     <div class="text-center text-white">
                                         <div class="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -128,6 +156,7 @@ $hero_button_link = $settings['hero_button_link'] ?? 'products.php';
                                         <p class="text-red-100 text-sm"><?= htmlspecialchars($cat['description']) ?></p>
                                     </div>
                                 </div>
+                                <?php endif; ?>
                             </div>
                         </a>
                     </div>
@@ -171,15 +200,19 @@ function updateCarousel() {
 function nextCategory() {
     if (currentCategory < maxIndex) {
         currentCategory++;
-        updateCarousel();
+    } else {
+        currentCategory = 0; // Loop back to start
     }
+    updateCarousel();
 }
 
 function prevCategory() {
     if (currentCategory > 0) {
         currentCategory--;
-        updateCarousel();
+    } else {
+        currentCategory = maxIndex; // Loop to end
     }
+    updateCarousel();
 }
 
 function goToCategory(index) {
@@ -187,15 +220,22 @@ function goToCategory(index) {
     updateCarousel();
 }
 
-// Auto-rotate every 5 seconds
-setInterval(() => {
-    if (currentCategory >= maxIndex) {
-        currentCategory = 0;
-    } else {
-        currentCategory++;
-    }
-    updateCarousel();
-}, 5000);
+// Auto-rotate every 3 seconds
+let autoRotate = setInterval(() => {
+    nextCategory();
+}, 3000);
+
+// Pause auto-rotate on hover
+const carousel = document.getElementById('categoryCarousel');
+carousel.addEventListener('mouseenter', () => {
+    clearInterval(autoRotate);
+});
+
+carousel.addEventListener('mouseleave', () => {
+    autoRotate = setInterval(() => {
+        nextCategory();
+    }, 3000);
+});
 
 // Initialize
 updateCarousel();
@@ -230,8 +270,8 @@ updateResponsive();
         <h2 class="text-4xl md:text-5xl font-bold text-center text-gray-800 mb-16">Featured Products</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <?php foreach ($products as $p): ?>
-            <div class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:-translate-y-2">
-                <div class="aspect-square bg-gray-100 overflow-hidden flex items-center justify-center">
+            <div class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:-translate-y-2 <?= $p['is_featured'] ? 'featured-product' : '' ?>">
+                <div class="aspect-square bg-gray-100 overflow-hidden flex items-center justify-center p-4">
                     <?php if ($p['primary_image']): ?>
                     <img src="uploads/products/<?= htmlspecialchars($p['primary_image']) ?>" alt="<?= htmlspecialchars($p['article_code']) ?>" class="w-full h-full object-contain group-hover:scale-110 transition duration-500">
                     <?php else: ?>
@@ -243,8 +283,8 @@ updateResponsive();
                 <div class="p-6">
                     <span class="text-sm font-semibold text-red-600 uppercase"><?= htmlspecialchars($p['category_name']) ?></span>
                     <h3 class="text-xl font-bold text-gray-800 mt-2 mb-2">Art. <?= htmlspecialchars($p['article_code']) ?></h3>
-                    <?php if ($p['description']): ?>
-                    <p class="text-gray-600 text-sm mb-4 line-clamp-2"><?= htmlspecialchars($p['description']) ?></p>
+                    <?php if ($p['sizes']): ?>
+                    <p class="text-gray-600 text-sm mb-4">Sizes: <?= htmlspecialchars($p['sizes']) ?></p>
                     <?php endif; ?>
                     <a href="product.php?slug=<?= $p['slug'] ?>" class="inline-block bg-red-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-red-700 transition">
                         View Details
