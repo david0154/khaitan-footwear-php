@@ -1,0 +1,126 @@
+<?php
+require_once 'includes/header.php';
+
+$id = $_GET['id'] ?? 0;
+$product = null;
+if ($id) {
+    $stmt = $pdo->prepare("SELECT * FROM products WHERE id = ?");
+    $stmt->execute([$id]);
+    $product = $stmt->fetch();
+}
+
+$categories = $pdo->query("SELECT * FROM categories WHERE status = 'active' ORDER BY name")->fetchAll();
+
+$success = '';
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = $_POST['name'];
+    $category_id = $_POST['category_id'];
+    $article_code = $_POST['article_code'];
+    $description = $_POST['description'];
+    $sizes = $_POST['sizes'];
+    $colors = $_POST['colors'];
+    $is_featured = isset($_POST['is_featured']) ? 1 : 0;
+    $status = $_POST['status'];
+    $slug = strtolower(preg_replace('/[^a-z0-9]+/', '-', $name));
+    
+    // Handle image upload
+    $primary_image = $product['primary_image'] ?? '';
+    if (!empty($_FILES['primary_image']['name'])) {
+        $ext = pathinfo($_FILES['primary_image']['name'], PATHINFO_EXTENSION);
+        $primary_image = uniqid() . '.' . $ext;
+        move_uploaded_file($_FILES['primary_image']['tmp_name'], '../uploads/products/' . $primary_image);
+    }
+    
+    if ($id) {
+        $stmt = $pdo->prepare("UPDATE products SET category_id=?, name=?, slug=?, article_code=?, description=?, sizes=?, colors=?, primary_image=?, is_featured=?, status=? WHERE id=?");
+        $stmt->execute([$category_id, $name, $slug, $article_code, $description, $sizes, $colors, $primary_image, $is_featured, $status, $id]);
+        $success = 'Product updated successfully';
+    } else {
+        $stmt = $pdo->prepare("INSERT INTO products (category_id, name, slug, article_code, description, sizes, colors, primary_image, is_featured, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$category_id, $name, $slug, $article_code, $description, $sizes, $colors, $primary_image, $is_featured, $status]);
+        $success = 'Product created successfully';
+        header('Location: products.php');
+        exit;
+    }
+}
+?>
+
+<div class="mb-6">
+<a href="products.php" class="text-orange-600 hover:text-orange-700">← Back to Products</a>
+<h1 class="text-3xl font-bold text-gray-800 mt-2"><?= $id ? 'Edit' : 'Add' ?> Product</h1>
+</div>
+
+<?php if ($success): ?>
+<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4"><?= htmlspecialchars($success) ?></div>
+<?php endif; ?>
+
+<div class="bg-white rounded-lg shadow p-6">
+<form method="POST" enctype="multipart/form-data" class="space-y-4">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block font-medium mb-2">Product Name *</label>
+<input type="text" name="name" value="<?= htmlspecialchars($product['name'] ?? '') ?>" required class="w-full px-4 py-2 border rounded-lg">
+</div>
+<div>
+<label class="block font-medium mb-2">Category *</label>
+<select name="category_id" required class="w-full px-4 py-2 border rounded-lg">
+<option value="">Select Category</option>
+<?php foreach ($categories as $c): ?>
+<option value="<?= $c['id'] ?>" <?= ($product['category_id'] ?? '') == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
+<?php endforeach; ?>
+</select>
+</div>
+</div>
+
+<div>
+<label class="block font-medium mb-2">Article Code *</label>
+<input type="text" name="article_code" value="<?= htmlspecialchars($product['article_code'] ?? '') ?>" required class="w-full px-4 py-2 border rounded-lg">
+</div>
+
+<div>
+<label class="block font-medium mb-2">Description</label>
+<textarea name="description" rows="4" class="w-full px-4 py-2 border rounded-lg"><?= htmlspecialchars($product['description'] ?? '') ?></textarea>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block font-medium mb-2">Sizes (comma separated)</label>
+<input type="text" name="sizes" value="<?= htmlspecialchars($product['sizes'] ?? '') ?>" placeholder="6, 7, 8, 9, 10" class="w-full px-4 py-2 border rounded-lg">
+</div>
+<div>
+<label class="block font-medium mb-2">Colors (comma separated)</label>
+<input type="text" name="colors" value="<?= htmlspecialchars($product['colors'] ?? '') ?>" placeholder="Black, Brown, White" class="w-full px-4 py-2 border rounded-lg">
+</div>
+</div>
+
+<div>
+<label class="block font-medium mb-2">Primary Image</label>
+<input type="file" name="primary_image" accept="image/*" class="w-full px-4 py-2 border rounded-lg">
+<?php if (!empty($product['primary_image'])): ?>
+<img src="../uploads/products/<?= htmlspecialchars($product['primary_image']) ?>" class="mt-2 w-32 h-32 object-cover rounded">
+<?php endif; ?>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="flex items-center">
+<input type="checkbox" name="is_featured" value="1" <?= ($product['is_featured'] ?? 0) ? 'checked' : '' ?> class="mr-2">
+<span class="font-medium">Featured Product</span>
+</label>
+</div>
+<div>
+<label class="block font-medium mb-2">Status</label>
+<select name="status" class="w-full px-4 py-2 border rounded-lg">
+<option value="active" <?= ($product['status'] ?? 'active') == 'active' ? 'selected' : '' ?>>Active</option>
+<option value="inactive" <?= ($product['status'] ?? '') == 'inactive' ? 'selected' : '' ?>>Inactive</option>
+</select>
+</div>
+</div>
+
+<button type="submit" class="bg-orange-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-orange-700"><?= $id ? 'Update' : 'Create' ?> Product</button>
+</form>
+</div>
+
+<?php require_once 'includes/footer.php'; ?>
