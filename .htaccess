@@ -1,0 +1,23 @@
+# Enable Rewrite Engine
+RewriteEngine On
+
+# Redirect to install.php if not installed
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/install\.php$
+RewriteCond %{DOCUMENT_ROOT}/config.php !-f
+RewriteRule ^.*$ /install.php [L,R=302]
+
+# PHP Security
+php_flag display_errors Off
+php_value upload_max_filesize 10M
+php_value post_max_size 10M
+
+# Prevent directory browsing
+Options -Indexes
+
+# Protect sensitive files
+<FilesMatch "^(config\.php|database\.sql|installed\.lock)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
