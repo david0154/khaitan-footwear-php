@@ -1,11 +1,18 @@
 -- Khaitan Footwear Database Schema
--- Drop tables if exist to ensure clean installation
+-- Disable foreign key checks to avoid constraint errors
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- Drop all tables if they exist
+DROP TABLE IF EXISTS product_images;
 DROP TABLE IF EXISTS contacts;
 DROP TABLE IF EXISTS banners;
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS settings;
 DROP TABLE IF EXISTS users;
+
+-- Re-enable foreign key checks
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- Users Table
 CREATE TABLE users (
