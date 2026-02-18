@@ -84,6 +84,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <span>Updates</span>
         </a>
         
+        <a href="github-settings.php" class="flex items-center space-x-3 px-4 py-3 rounded-lg <?= $current_page === 'github-settings.php' ? 'bg-red-600' : 'hover:bg-gray-800' ?> transition">
+            <span>🔐</span>
+            <span>GitHub Settings</span>
+        </a>
+        
         <a href="email-settings.php" class="flex items-center space-x-3 px-4 py-3 rounded-lg <?= $current_page === 'email-settings.php' ? 'bg-red-600' : 'hover:bg-gray-800' ?> transition">
             <span>✉️</span>
             <span>Email Config</span>
