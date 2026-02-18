@@ -26,6 +26,7 @@ $show_social = !empty($settings['show_social_media']);
     <link rel="icon" type="image/x-icon" href="/uploads/<?= htmlspecialchars($site_favicon) ?>">
     <?php endif; ?>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/assets/css/featured-blink.css">
 </head>
 <body class="bg-gray-50">
 <!-- Top Bar -->
