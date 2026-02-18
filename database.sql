@@ -66,8 +66,13 @@ CREATE TABLE IF NOT EXISTS settings (
   value TEXT
 );
 
-INSERT INTO categories (name, slug, description, status) VALUES
-('Men\'s Collection', 'mens-collection', 'Premium footwear for men', 'active'),
-('Women\'s Collection', 'womens-collection', 'Stylish footwear for women', 'active'),
-('Kids Collection', 'kids-collection', 'Comfortable shoes for kids', 'active'),
-('Sports Shoes', 'sports-shoes', 'Athletic and sports footwear', 'active');
+-- Insert default categories (Gents, Ladies, Kids)
+INSERT INTO categories (name, slug, description, status, order_num) VALUES
+('Gents Collection', 'gents-collection', 'Premium footwear for men', 'active', 1),
+('Ladies Collection', 'ladies-collection', 'Stylish footwear for women', 'active', 2),
+('Kids Collection', 'kids-collection', 'Comfortable shoes for kids', 'active', 3),
+('Sports Shoes', 'sports-shoes', 'Athletic and sports footwear', 'active', 4);
+
+-- Insert default banner
+INSERT INTO banners (title, subtitle, button_text, button_link, status, order_num) VALUES
+('Welcome to Khaitan Footwear', 'Leading Manufacturer & Supplier of Quality Footwear', 'View Products', 'products.php', 'active', 1);
