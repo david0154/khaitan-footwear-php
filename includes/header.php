@@ -1,118 +1,90 @@
 <?php
-if (file_exists('config.php')) {
+if (!isset($pdo)) {
     require_once 'config.php';
-    try {
-        $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASS);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-        die('Database connection failed');
-    }
-    
-    $settings = [];
-    $stmt = $pdo->query("SELECT * FROM settings");
-    while ($row = $stmt->fetch()) {
-        $settings[$row['key']] = $row['value'];
-    }
-} else {
-    if (basename($_SERVER['PHP_SELF']) !== 'install.php') {
-        header('Location: install.php');
-        exit;
-    }
+    $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASS);
 }
 
-$site_name = $settings['site_name'] ?? 'Khaitan Footwear';
+// Load settings
+$stmt = $pdo->query("SELECT * FROM settings");
+$settings = [];
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    $settings[$row['key']] = $row['value'];
+}
+
 $site_logo = $settings['site_logo'] ?? '';
-$logo_text = $settings['logo_text'] ?? $site_name;
-$current_page = basename($_SERVER['PHP_SELF'], '.php');
+$site_favicon = $settings['site_favicon'] ?? '';
+$show_social = !empty($settings['show_social_media']);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($site_name) ?> - Leading Footwear Manufacturer</title>
+    <title><?= $settings['site_name'] ?? 'Khaitan Footwear' ?></title>
+    <?php if ($site_favicon): ?>
+    <link rel="icon" type="image/x-icon" href="/uploads/<?= htmlspecialchars($site_favicon) ?>">
+    <?php endif; ?>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .nav-link { position: relative; }
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 3px;
-            background: #dc2626;
-            transition: width 0.3s;
-        }
-        .nav-link:hover::after,
-        .nav-link.active::after {
-            width: 100%;
-        }
-    </style>
 </head>
-<body class="bg-white">
-    <!-- Header -->
-    <header class="bg-white shadow-md sticky top-0 z-50">
-        <nav class="container mx-auto px-6 py-4">
-            <div class="flex justify-between items-center">
-                <!-- Logo -->
-                <a href="index.php" class="flex items-center space-x-3 hover:opacity-80 transition">
-                    <?php if ($site_logo && file_exists('uploads/' . $site_logo)): ?>
-                    <img src="uploads/<?= htmlspecialchars($site_logo) ?>" alt="<?= htmlspecialchars($site_name) ?>" class="h-12 object-contain">
+<body class="bg-gray-50">
+<!-- Top Bar -->
+<div class="bg-gradient-to-r from-red-600 to-red-700 text-white py-2">
+    <div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-between items-center text-sm">
+        <div class="flex items-center space-x-4">
+            <span>📞 <?= htmlspecialchars($settings['site_phone'] ?? '+91 98765 43210') ?></span>
+            <span>✉️ <?= htmlspecialchars($settings['site_email'] ?? 'info@khaitanfootwear.in') ?></span>
+        </div>
+        
+        <?php if ($show_social): ?>
+        <div class="flex items-center space-x-3">
+            <?php if (!empty($settings['facebook_url'])): ?>
+            <a href="<?= htmlspecialchars($settings['facebook_url']) ?>" target="_blank" class="hover:text-red-200 transition">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <?php endif; ?>
+            
+            <?php if (!empty($settings['instagram_url'])): ?>
+            <a href="<?= htmlspecialchars($settings['instagram_url']) ?>" target="_blank" class="hover:text-red-200 transition">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </a>
+            <?php endif; ?>
+            
+            <?php if (!empty($settings['twitter_url'])): ?>
+            <a href="<?= htmlspecialchars($settings['twitter_url']) ?>" target="_blank" class="hover:text-red-200 transition">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+            </a>
+            <?php endif; ?>
+            
+            <?php if (!empty($settings['whatsapp_number'])): ?>
+            <a href="https://wa.me/<?= htmlspecialchars($settings['whatsapp_number']) ?>" target="_blank" class="hover:text-red-200 transition">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+            </a>
+            <?php endif; ?>
+        </div>
+        <?php endif; ?>
+    </div>
+</div>
+
+<!-- Navigation -->
+<nav class="bg-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between items-center h-20">
+            <div class="flex items-center">
+                <a href="index.php" class="flex items-center">
+                    <?php if ($site_logo): ?>
+                    <img src="/uploads/<?= htmlspecialchars($site_logo) ?>" alt="Logo" class="h-12">
                     <?php else: ?>
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-gradient-to-br from-red-600 to-red-800 rounded-lg flex items-center justify-center text-white text-2xl font-bold shadow-lg">
-                            <?= strtoupper(substr($logo_text, 0, 1)) ?>
-                        </div>
-                        <span class="ml-3 text-2xl font-black text-gray-800">
-                            <?= htmlspecialchars($logo_text) ?>
-                        </span>
-                    </div>
+                    <span class="text-2xl font-bold text-red-600">Khaitan Footwear</span>
                     <?php endif; ?>
                 </a>
-                
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center space-x-10">
-                    <a href="index.php" class="nav-link <?= $current_page == 'index' ? 'active' : '' ?>">
-                        <span class="text-gray-700 hover:text-red-600 transition font-semibold text-lg <?= $current_page == 'index' ? 'text-red-600' : '' ?>">Home</span>
-                    </a>
-                    <a href="products.php" class="nav-link <?= $current_page == 'products' || $current_page == 'product' ? 'active' : '' ?>">
-                        <span class="text-gray-700 hover:text-red-600 transition font-semibold text-lg <?= $current_page == 'products' || $current_page == 'product' ? 'text-red-600' : '' ?>">Products</span>
-                    </a>
-                    <a href="about.php" class="nav-link <?= $current_page == 'about' ? 'active' : '' ?>">
-                        <span class="text-gray-700 hover:text-red-600 transition font-semibold text-lg <?= $current_page == 'about' ? 'text-red-600' : '' ?>">About</span>
-                    </a>
-                    <a href="contact.php" class="nav-link <?= $current_page == 'contact' ? 'active' : '' ?>">
-                        <span class="text-gray-700 hover:text-red-600 transition font-semibold text-lg <?= $current_page == 'contact' ? 'text-red-600' : '' ?>">Contact</span>
-                    </a>
-                    <a href="admin/login.php" class="bg-gradient-to-r from-red-600 to-red-800 text-white px-6 py-2 rounded-full font-bold hover:shadow-xl transform hover:scale-105 transition">
-                        Admin
-                    </a>
-                </div>
-                
-                <!-- Mobile Menu Button -->
-                <button id="mobile-menu-btn" class="md:hidden text-gray-700 border-2 border-red-600 p-2 rounded-lg">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
             </div>
             
-            <!-- Mobile Menu -->
-            <div id="mobile-menu" class="hidden md:hidden mt-4 space-y-2 bg-gray-50 rounded-xl p-4 shadow-lg">
-                <a href="index.php" class="block py-3 px-4 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition font-semibold">Home</a>
-                <a href="products.php" class="block py-3 px-4 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition font-semibold">Products</a>
-                <a href="about.php" class="block py-3 px-4 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition font-semibold">About</a>
-                <a href="contact.php" class="block py-3 px-4 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition font-semibold">Contact</a>
-                <a href="admin/login.php" class="block py-3 px-4 bg-red-600 text-white rounded-lg font-bold text-center hover:bg-red-700 transition">Admin Login</a>
+            <div class="hidden md:flex space-x-8">
+                <a href="index.php" class="text-gray-700 hover:text-red-600 font-medium transition">Home</a>
+                <a href="about.php" class="text-gray-700 hover:text-red-600 font-medium transition">About</a>
+                <a href="products.php" class="text-gray-700 hover:text-red-600 font-medium transition">Products</a>
+                <a href="contact.php" class="text-gray-700 hover:text-red-600 font-medium transition">Contact</a>
             </div>
-        </nav>
-    </header>
-    
-    <script>
-        document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
-            document.getElementById('mobile-menu').classList.toggle('hidden');
-        });
-    </script>
+        </div>
+    </div>
+</nav>

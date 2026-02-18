@@ -15,7 +15,6 @@ $success = '';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = $_POST['name'];
     $category_id = $_POST['category_id'];
     $article_code = $_POST['article_code'];
     $description = $_POST['description'];
@@ -23,7 +22,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $colors = $_POST['colors'];
     $is_featured = isset($_POST['is_featured']) ? 1 : 0;
     $status = $_POST['status'];
-    $slug = strtolower(preg_replace('/[^a-z0-9]+/', '-', $name));
+    
+    // Product name is same as article code
+    $name = $article_code;
+    $slug = strtolower(preg_replace('/[^a-z0-9]+/', '-', $article_code));
     
     // Handle image upload
     $primary_image = $product['primary_image'] ?? '';
@@ -60,8 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <form method="POST" enctype="multipart/form-data" class="space-y-4">
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 <div>
-<label class="block font-medium mb-2">Product Name *</label>
-<input type="text" name="name" value="<?= htmlspecialchars($product['name'] ?? '') ?>" required class="w-full px-4 py-2 border rounded-lg">
+<label class="block font-medium mb-2">Article Number / Product Code *</label>
+<input type="text" name="article_code" value="<?= htmlspecialchars($product['article_code'] ?? '') ?>" required class="w-full px-4 py-2 border rounded-lg" placeholder="e.g., KH-2024-001">
+<p class="text-sm text-gray-600 mt-1">This will be the product's unique identifier</p>
 </div>
 <div>
 <label class="block font-medium mb-2">Category *</label>
@@ -75,13 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <div>
-<label class="block font-medium mb-2">Article Code *</label>
-<input type="text" name="article_code" value="<?= htmlspecialchars($product['article_code'] ?? '') ?>" required class="w-full px-4 py-2 border rounded-lg">
-</div>
-
-<div>
 <label class="block font-medium mb-2">Description</label>
-<textarea name="description" rows="4" class="w-full px-4 py-2 border rounded-lg"><?= htmlspecialchars($product['description'] ?? '') ?></textarea>
+<textarea name="description" rows="4" class="w-full px-4 py-2 border rounded-lg" placeholder="Product details, material, features..."><?= htmlspecialchars($product['description'] ?? '') ?></textarea>
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
