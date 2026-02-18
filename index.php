@@ -12,25 +12,44 @@ $products = $pdo->query("SELECT p.*, c.name as category_name FROM products p LEF
 
 $tagline = $settings['site_tagline'] ?? 'Leading Manufacturer of Quality Footwear';
 $about_text = $settings['home_about'] ?? 'We are one of the leading footwear manufacturers in India, offering stylish, comfortable and durable products.';
+
+// Hero banner settings
+$hero_image = $settings['hero_banner_image'] ?? '';
+$hero_title = $settings['hero_title'] ?? 'Welcome to Khaitan Footwear';
+$hero_subtitle = $settings['hero_subtitle'] ?? 'Leading manufacturer and supplier of quality footwear';
+$hero_button_text = $settings['hero_button_text'] ?? 'View Products';
+$hero_button_link = $settings['hero_button_link'] ?? 'products.php';
 ?>
 
-<!-- Hero Section -->
-<section class="relative bg-gradient-to-r from-red-600 via-red-700 to-red-900 text-white py-32 overflow-hidden">
-    <div class="absolute inset-0 opacity-10">
-        <div class="absolute top-0 left-1/4 w-96 h-96 bg-white rounded-full blur-3xl"></div>
-        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+<!-- Hero Section with Background Image -->
+<section class="relative bg-gray-900 text-white py-32 overflow-hidden" style="min-height: 600px;">
+    <?php if ($hero_image): ?>
+    <!-- Custom uploaded background -->
+    <div class="absolute inset-0 z-0">
+        <img src="uploads/<?= htmlspecialchars($hero_image) ?>" alt="Hero Banner" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent"></div>
     </div>
+    <?php else: ?>
+    <!-- Default gradient background -->
+    <div class="absolute inset-0 bg-gradient-to-r from-red-600 via-red-700 to-red-900 z-0">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-0 left-1/4 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+        </div>
+    </div>
+    <?php endif; ?>
+    
     <div class="container mx-auto px-6 relative z-10">
         <div class="max-w-4xl mx-auto text-center">
-            <h1 class="text-6xl md:text-7xl font-black mb-6 leading-tight">
-                <?= htmlspecialchars($site_name) ?>
+            <h1 class="text-6xl md:text-7xl font-black mb-6 leading-tight drop-shadow-2xl">
+                <?= htmlspecialchars($hero_title) ?>
             </h1>
-            <p class="text-2xl md:text-3xl font-light mb-8 text-red-100">
-                <?= htmlspecialchars($tagline) ?>
+            <p class="text-2xl md:text-3xl font-light mb-8 text-red-100 drop-shadow-lg">
+                <?= htmlspecialchars($hero_subtitle) ?>
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="products.php" class="bg-white text-red-600 px-10 py-4 rounded-full text-xl font-bold hover:bg-red-50 transform hover:scale-105 transition shadow-2xl">
-                    View Products
+                <a href="<?= htmlspecialchars($hero_button_link) ?>" class="bg-white text-red-600 px-10 py-4 rounded-full text-xl font-bold hover:bg-red-50 transform hover:scale-105 transition shadow-2xl">
+                    <?= htmlspecialchars($hero_button_text) ?>
                 </a>
                 <a href="contact.php" class="border-2 border-white text-white px-10 py-4 rounded-full text-xl font-bold hover:bg-white hover:text-red-600 transform hover:scale-105 transition">
                     Contact Us
@@ -105,7 +124,7 @@ $about_text = $settings['home_about'] ?? 'We are one of the leading footwear man
             <div class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:-translate-y-2">
                 <div class="aspect-square bg-gray-100 overflow-hidden">
                     <?php if ($p['primary_image']): ?>
-                    <img src="uploads/products/<?= htmlspecialchars($p['primary_image']) ?>" alt="<?= htmlspecialchars($p['name']) ?>" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <img src="uploads/products/<?= htmlspecialchars($p['primary_image']) ?>" alt="<?= htmlspecialchars($p['article_code']) ?>" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
                     <?php else: ?>
                     <div class="w-full h-full flex items-center justify-center bg-gray-200">
                         <svg class="w-20 h-20 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,8 +135,10 @@ $about_text = $settings['home_about'] ?? 'We are one of the leading footwear man
                 </div>
                 <div class="p-6">
                     <span class="text-sm font-semibold text-red-600 uppercase"><?= htmlspecialchars($p['category_name']) ?></span>
-                    <h3 class="text-xl font-bold text-gray-800 mt-2 mb-2"><?= htmlspecialchars($p['name']) ?></h3>
-                    <p class="text-gray-600 text-sm mb-4">Code: <?= htmlspecialchars($p['article_code']) ?></p>
+                    <h3 class="text-xl font-bold text-gray-800 mt-2 mb-2">Art. <?= htmlspecialchars($p['article_code']) ?></h3>
+                    <?php if ($p['description']): ?>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-2"><?= htmlspecialchars($p['description']) ?></p>
+                    <?php endif; ?>
                     <a href="product.php?slug=<?= $p['slug'] ?>" class="inline-block bg-red-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-red-700 transition">
                         View Details
                     </a>
