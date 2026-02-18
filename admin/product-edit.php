@@ -1,5 +1,6 @@
 <?php
 require_once 'includes/header.php';
+require_once 'product-upload-handler.php';
 
 $id = $_GET['id'] ?? 0;
 $product = null;
@@ -27,24 +28,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $article_code;
     $slug = strtolower(preg_replace('/[^a-z0-9]+/', '-', $article_code));
     
-    // Handle image upload
+    // Handle image upload with automatic resizing
     $primary_image = $product['primary_image'] ?? '';
     if (!empty($_FILES['primary_image']['name'])) {
-        $ext = pathinfo($_FILES['primary_image']['name'], PATHINFO_EXTENSION);
-        $primary_image = uniqid() . '.' . $ext;
-        move_uploaded_file($_FILES['primary_image']['tmp_name'], '../uploads/products/' . $primary_image);
+        $uploaded = handleProductImageUpload($_FILES['primary_image']);
+        if ($uploaded) {
+            // Delete old image if exists
+            if (!empty($product['primary_image']) && file_exists('../uploads/products/' . $product['primary_image'])) {
+                unlink('../uploads/products/' . $product['primary_image']);
+            }
+            $primary_image = $uploaded;
+        } else {
+            $error = 'Failed to upload image';
+        }
     }
     
-    if ($id) {
-        $stmt = $pdo->prepare("UPDATE products SET category_id=?, name=?, slug=?, article_code=?, description=?, sizes=?, colors=?, primary_image=?, is_featured=?, status=? WHERE id=?");
-        $stmt->execute([$category_id, $name, $slug, $article_code, $description, $sizes, $colors, $primary_image, $is_featured, $status, $id]);
-        $success = 'Product updated successfully';
-    } else {
-        $stmt = $pdo->prepare("INSERT INTO products (category_id, name, slug, article_code, description, sizes, colors, primary_image, is_featured, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$category_id, $name, $slug, $article_code, $description, $sizes, $colors, $primary_image, $is_featured, $status]);
-        $success = 'Product created successfully';
-        header('Location: products.php');
-        exit;
+    if (empty($error)) {
+        if ($id) {
+            $stmt = $pdo->prepare("UPDATE products SET category_id=?, name=?, slug=?, article_code=?, description=?, sizes=?, colors=?, primary_image=?, is_featured=?, status=? WHERE id=?");
+            $stmt->execute([$category_id, $name, $slug, $article_code, $description, $sizes, $colors, $primary_image, $is_featured, $status, $id]);
+            $success = '✅ Product updated successfully! Image automatically resized to 800x800 (aspect ratio maintained)';
+        } else {
+            $stmt = $pdo->prepare("INSERT INTO products (category_id, name, slug, article_code, description, sizes, colors, primary_image, is_featured, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$category_id, $name, $slug, $article_code, $description, $sizes, $colors, $primary_image, $is_featured, $status]);
+            $success = '✅ Product created successfully! Image automatically resized to 800x800 (aspect ratio maintained)';
+            header('Location: products.php');
+            exit;
+        }
     }
 }
 ?>
@@ -56,6 +66,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <?php if ($success): ?>
 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4"><?= htmlspecialchars($success) ?></div>
+<?php endif; ?>
+
+<?php if ($error): ?>
+<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"><?= htmlspecialchars($error) ?></div>
 <?php endif; ?>
 
 <div class="bg-white rounded-lg shadow p-6">
@@ -94,10 +108,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <div>
-<label class="block font-medium mb-2">Primary Image</label>
+<label class="block font-medium mb-2">🖼️ Product Image</label>
+<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-3">
+<p class="text-sm text-blue-800 font-semibold">✨ Smart Image Upload:</p>
+<ul class="text-sm text-blue-700 mt-2 space-y-1">
+<li>✅ Upload any size image (small or large)</li>
+<li>✅ Automatically resized to 800x800 pixels</li>
+<li>✅ Maintains aspect ratio (no cropping!)</li>
+<li>✅ Optimized for web display</li>
+<li>✅ Supports: JPG, PNG, GIF, WebP</li>
+</ul>
+</div>
 <input type="file" name="primary_image" accept="image/*" class="w-full px-4 py-2 border rounded-lg">
 <?php if (!empty($product['primary_image'])): ?>
-<img src="../uploads/products/<?= htmlspecialchars($product['primary_image']) ?>" class="mt-2 w-32 h-32 object-cover rounded">
+<div class="mt-4">
+<p class="text-sm font-semibold text-gray-700 mb-2">Current Image:</p>
+<img src="../uploads/products/<?= htmlspecialchars($product['primary_image']) ?>" class="w-48 h-48 object-contain border rounded-lg bg-gray-50">
+</div>
 <?php endif; ?>
 </div>
 
