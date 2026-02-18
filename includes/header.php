@@ -8,7 +8,6 @@ if (file_exists('config.php')) {
         die('Database connection failed');
     }
     
-    // Get settings
     $settings = [];
     $stmt = $pdo->query("SELECT * FROM settings");
     while ($row = $stmt->fetch()) {
@@ -31,26 +30,43 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($site_name) ?></title>
+    <title><?= htmlspecialchars($site_name) ?> - Leading Footwear Manufacturer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .nav-link { position: relative; }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: #dc2626;
+            transition: width 0.3s;
+        }
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen">
+<body class="bg-white">
     <!-- Header -->
-    <header class="glass sticky top-0 z-50 border-b border-white border-opacity-10">
+    <header class="bg-white shadow-md sticky top-0 z-50">
         <nav class="container mx-auto px-6 py-4">
             <div class="flex justify-between items-center">
                 <!-- Logo -->
-                <a href="index.php" class="flex items-center space-x-3 logo-glow">
+                <a href="index.php" class="flex items-center space-x-3 hover:opacity-80 transition">
                     <?php if ($site_logo && file_exists('uploads/' . $site_logo)): ?>
                     <img src="uploads/<?= htmlspecialchars($site_logo) ?>" alt="<?= htmlspecialchars($site_name) ?>" class="h-12 object-contain">
                     <?php else: ?>
                     <div class="flex items-center">
-                        <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center text-white text-2xl font-bold mr-3">
+                        <div class="w-12 h-12 bg-gradient-to-br from-red-600 to-red-800 rounded-lg flex items-center justify-center text-white text-2xl font-bold shadow-lg">
                             <?= strtoupper(substr($logo_text, 0, 1)) ?>
                         </div>
-                        <span class="text-2xl font-bold bg-gradient-to-r from-orange-500 to-red-500 text-transparent bg-clip-text neon-orange">
+                        <span class="ml-3 text-2xl font-black text-gray-800">
                             <?= htmlspecialchars($logo_text) ?>
                         </span>
                     </div>
@@ -58,26 +74,26 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                 </a>
                 
                 <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center space-x-8">
+                <div class="hidden md:flex items-center space-x-10">
                     <a href="index.php" class="nav-link <?= $current_page == 'index' ? 'active' : '' ?>">
-                        <span class="text-white hover:text-orange-500 transition font-medium <?= $current_page == 'index' ? 'text-orange-500' : '' ?>">Home</span>
+                        <span class="text-gray-700 hover:text-red-600 transition font-semibold text-lg <?= $current_page == 'index' ? 'text-red-600' : '' ?>">Home</span>
                     </a>
                     <a href="products.php" class="nav-link <?= $current_page == 'products' || $current_page == 'product' ? 'active' : '' ?>">
-                        <span class="text-white hover:text-orange-500 transition font-medium <?= $current_page == 'products' || $current_page == 'product' ? 'text-orange-500' : '' ?>">Products</span>
+                        <span class="text-gray-700 hover:text-red-600 transition font-semibold text-lg <?= $current_page == 'products' || $current_page == 'product' ? 'text-red-600' : '' ?>">Products</span>
                     </a>
                     <a href="about.php" class="nav-link <?= $current_page == 'about' ? 'active' : '' ?>">
-                        <span class="text-white hover:text-orange-500 transition font-medium <?= $current_page == 'about' ? 'text-orange-500' : '' ?>">About</span>
+                        <span class="text-gray-700 hover:text-red-600 transition font-semibold text-lg <?= $current_page == 'about' ? 'text-red-600' : '' ?>">About</span>
                     </a>
                     <a href="contact.php" class="nav-link <?= $current_page == 'contact' ? 'active' : '' ?>">
-                        <span class="text-white hover:text-orange-500 transition font-medium <?= $current_page == 'contact' ? 'text-orange-500' : '' ?>">Contact</span>
+                        <span class="text-gray-700 hover:text-red-600 transition font-semibold text-lg <?= $current_page == 'contact' ? 'text-red-600' : '' ?>">Contact</span>
                     </a>
-                    <a href="admin/login.php" class="btn-glow px-6 py-2 text-sm">
+                    <a href="admin/login.php" class="bg-gradient-to-r from-red-600 to-red-800 text-white px-6 py-2 rounded-full font-bold hover:shadow-xl transform hover:scale-105 transition">
                         Admin
                     </a>
                 </div>
                 
                 <!-- Mobile Menu Button -->
-                <button id="mobile-menu-btn" class="md:hidden text-white neon-border p-2 rounded-lg">
+                <button id="mobile-menu-btn" class="md:hidden text-gray-700 border-2 border-red-600 p-2 rounded-lg">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
@@ -85,12 +101,12 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             </div>
             
             <!-- Mobile Menu -->
-            <div id="mobile-menu" class="hidden md:hidden mt-4 space-y-2 glass-strong rounded-xl p-4">
-                <a href="index.php" class="block py-3 px-4 text-white hover:bg-orange-500 hover:bg-opacity-20 rounded-lg transition">Home</a>
-                <a href="products.php" class="block py-3 px-4 text-white hover:bg-orange-500 hover:bg-opacity-20 rounded-lg transition">Products</a>
-                <a href="about.php" class="block py-3 px-4 text-white hover:bg-orange-500 hover:bg-opacity-20 rounded-lg transition">About</a>
-                <a href="contact.php" class="block py-3 px-4 text-white hover:bg-orange-500 hover:bg-opacity-20 rounded-lg transition">Contact</a>
-                <a href="admin/login.php" class="block py-3 px-4 text-orange-500 font-semibold bg-orange-500 bg-opacity-10 rounded-lg">Admin Login</a>
+            <div id="mobile-menu" class="hidden md:hidden mt-4 space-y-2 bg-gray-50 rounded-xl p-4 shadow-lg">
+                <a href="index.php" class="block py-3 px-4 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition font-semibold">Home</a>
+                <a href="products.php" class="block py-3 px-4 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition font-semibold">Products</a>
+                <a href="about.php" class="block py-3 px-4 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition font-semibold">About</a>
+                <a href="contact.php" class="block py-3 px-4 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition font-semibold">Contact</a>
+                <a href="admin/login.php" class="block py-3 px-4 bg-red-600 text-white rounded-lg font-bold text-center hover:bg-red-700 transition">Admin Login</a>
             </div>
         </nav>
     </header>
@@ -100,4 +116,3 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             document.getElementById('mobile-menu').classList.toggle('hidden');
         });
     </script>
-    <script src="assets/js/main.js"></script>
