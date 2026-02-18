@@ -76,8 +76,13 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </a>
         
         <div class="pt-4 pb-2 px-4">
-            <p class="text-xs uppercase text-gray-500 font-semibold">Settings</p>
+            <p class="text-xs uppercase text-gray-500 font-semibold">System</p>
         </div>
+        
+        <a href="updates.php" class="flex items-center space-x-3 px-4 py-3 rounded-lg <?= $current_page === 'updates.php' ? 'bg-red-600' : 'hover:bg-gray-800' ?> transition">
+            <span>🔄</span>
+            <span>Updates</span>
+        </a>
         
         <a href="email-settings.php" class="flex items-center space-x-3 px-4 py-3 rounded-lg <?= $current_page === 'email-settings.php' ? 'bg-red-600' : 'hover:bg-gray-800' ?> transition">
             <span>✉️</span>
