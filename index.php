@@ -88,30 +88,139 @@ $hero_button_link = $settings['hero_button_link'] ?? 'products.php';
     </div>
 </section>
 
-<!-- Categories Section -->
+<!-- Categories Carousel Section -->
 <?php if (!empty($categories)): ?>
 <section class="py-20 bg-gray-50">
     <div class="container mx-auto px-6">
         <h2 class="text-4xl md:text-5xl font-bold text-center text-gray-800 mb-16">Our Collections</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <?php foreach ($categories as $cat): ?>
-            <a href="products.php?category=<?= $cat['slug'] ?>" class="group relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition transform hover:-translate-y-2">
-                <div class="aspect-square bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center">
-                    <div class="text-center text-white p-6">
-                        <div class="w-24 h-24 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-bold mb-2"><?= htmlspecialchars($cat['name']) ?></h3>
-                        <p class="text-red-100"><?= htmlspecialchars($cat['description']) ?></p>
+        
+        <!-- Carousel Container -->
+        <div class="relative">
+            <!-- Previous Button -->
+            <button onclick="prevCategory()" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-red-600 hover:text-white text-gray-800 rounded-full p-4 shadow-xl transition transform hover:scale-110">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+            
+            <!-- Next Button -->
+            <button onclick="nextCategory()" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-red-600 hover:text-white text-gray-800 rounded-full p-4 shadow-xl transition transform hover:scale-110">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+            
+            <!-- Carousel Items -->
+            <div id="categoryCarousel" class="overflow-hidden">
+                <div id="categoryTrack" class="flex transition-transform duration-500 ease-in-out">
+                    <?php foreach ($categories as $cat): ?>
+                    <div class="category-slide flex-shrink-0 px-4" style="width: 25%;">
+                        <a href="products.php?category=<?= $cat['slug'] ?>" class="group block">
+                            <div class="relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition transform hover:-translate-y-2">
+                                <div class="aspect-square bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center p-8">
+                                    <div class="text-center text-white">
+                                        <div class="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                            </svg>
+                                        </div>
+                                        <h3 class="text-2xl font-bold mb-2"><?= htmlspecialchars($cat['name']) ?></h3>
+                                        <p class="text-red-100 text-sm"><?= htmlspecialchars($cat['description']) ?></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
                     </div>
+                    <?php endforeach; ?>
                 </div>
-            </a>
-            <?php endforeach; ?>
+            </div>
+            
+            <!-- Dots Indicator -->
+            <div class="flex justify-center mt-8 space-x-2">
+                <?php for ($i = 0; $i < count($categories); $i++): ?>
+                <button onclick="goToCategory(<?= $i ?>)" class="category-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-red-600 transition" data-index="<?= $i ?>"></button>
+                <?php endfor; ?>
+            </div>
         </div>
     </div>
 </section>
+
+<script>
+let currentCategory = 0;
+const totalCategories = <?= count($categories) ?>;
+const visibleSlides = 4;
+const maxIndex = Math.max(0, totalCategories - visibleSlides);
+
+function updateCarousel() {
+    const track = document.getElementById('categoryTrack');
+    const offset = -(currentCategory * (100 / visibleSlides));
+    track.style.transform = `translateX(${offset}%)`;
+    
+    // Update dots
+    document.querySelectorAll('.category-dot').forEach((dot, index) => {
+        if (index === currentCategory) {
+            dot.classList.remove('bg-gray-300');
+            dot.classList.add('bg-red-600');
+        } else {
+            dot.classList.remove('bg-red-600');
+            dot.classList.add('bg-gray-300');
+        }
+    });
+}
+
+function nextCategory() {
+    if (currentCategory < maxIndex) {
+        currentCategory++;
+        updateCarousel();
+    }
+}
+
+function prevCategory() {
+    if (currentCategory > 0) {
+        currentCategory--;
+        updateCarousel();
+    }
+}
+
+function goToCategory(index) {
+    currentCategory = Math.min(index, maxIndex);
+    updateCarousel();
+}
+
+// Auto-rotate every 5 seconds
+setInterval(() => {
+    if (currentCategory >= maxIndex) {
+        currentCategory = 0;
+    } else {
+        currentCategory++;
+    }
+    updateCarousel();
+}, 5000);
+
+// Initialize
+updateCarousel();
+
+// Responsive: Adjust visible slides
+function updateResponsive() {
+    const width = window.innerWidth;
+    if (width < 768) {
+        document.querySelectorAll('.category-slide').forEach(slide => {
+            slide.style.width = '100%';
+        });
+    } else if (width < 1024) {
+        document.querySelectorAll('.category-slide').forEach(slide => {
+            slide.style.width = '50%';
+        });
+    } else {
+        document.querySelectorAll('.category-slide').forEach(slide => {
+            slide.style.width = '25%';
+        });
+    }
+}
+
+window.addEventListener('resize', updateResponsive);
+updateResponsive();
+</script>
 <?php endif; ?>
 
 <!-- Featured Products -->
@@ -122,15 +231,13 @@ $hero_button_link = $settings['hero_button_link'] ?? 'products.php';
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <?php foreach ($products as $p): ?>
             <div class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:-translate-y-2">
-                <div class="aspect-square bg-gray-100 overflow-hidden">
+                <div class="aspect-square bg-gray-100 overflow-hidden flex items-center justify-center">
                     <?php if ($p['primary_image']): ?>
-                    <img src="uploads/products/<?= htmlspecialchars($p['primary_image']) ?>" alt="<?= htmlspecialchars($p['article_code']) ?>" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <img src="uploads/products/<?= htmlspecialchars($p['primary_image']) ?>" alt="<?= htmlspecialchars($p['article_code']) ?>" class="w-full h-full object-contain group-hover:scale-110 transition duration-500">
                     <?php else: ?>
-                    <div class="w-full h-full flex items-center justify-center bg-gray-200">
-                        <svg class="w-20 h-20 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                    </div>
+                    <svg class="w-20 h-20 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
                     <?php endif; ?>
                 </div>
                 <div class="p-6">
