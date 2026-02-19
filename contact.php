@@ -1,6 +1,12 @@
 <?php
 require_once 'includes/header.php';
-require_once 'includes/mailer.php';
+
+// Try to load simple mailer, if it fails, just save to database
+$emailEnabled = false;
+if (file_exists('includes/mailer-simple.php')) {
+    require_once 'includes/mailer-simple.php';
+    $emailEnabled = true;
+}
 
 $success = '';
 $error = '';
@@ -17,25 +23,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("INSERT INTO contacts (name, email, phone, company, message) VALUES (?, ?, ?, ?, ?)");
         $stmt->execute([$name, $email, $phone, $company, $message]);
         
-        // Prepare contact data
-        $contactData = [
-            'name' => htmlspecialchars($name),
-            'email' => htmlspecialchars($email),
-            'phone' => htmlspecialchars($phone),
-            'company' => htmlspecialchars($company),
-            'message' => nl2br(htmlspecialchars($message))
-        ];
-        
-        // Send email notification to admin
-        $adminNotified = notifyAdminNewContact($contactData);
-        
-        // Send confirmation email to customer
-        $customerNotified = sendContactConfirmation($contactData);
-        
-        if ($adminNotified && $customerNotified) {
-            $success = '✅ Thank you! Your message has been sent successfully. We will contact you soon. Check your email for confirmation.';
-        } elseif ($adminNotified) {
-            $success = '✅ Thank you! Your message has been sent to our team. We will contact you soon.';
+        if ($emailEnabled) {
+            // Prepare contact data
+            $contactData = [
+                'name' => htmlspecialchars($name),
+                'email' => htmlspecialchars($email),
+                'phone' => htmlspecialchars($phone),
+                'company' => htmlspecialchars($company),
+                'message' => nl2br(htmlspecialchars($message))
+            ];
+            
+            // Send email notification to admin
+            $adminNotified = notifyAdminNewContact($contactData);
+            
+            // Send confirmation email to customer  
+            $customerNotified = sendContactConfirmation($contactData);
+            
+            if ($adminNotified && $customerNotified) {
+                $success = '✅ Thank you! Your message has been sent successfully. We will contact you soon. Check your email for confirmation.';
+            } elseif ($adminNotified) {
+                $success = '✅ Thank you! Your message has been sent to our team. We will contact you soon.';
+            } else {
+                $success = '✅ Thank you! Your message has been saved. We will contact you soon.';
+            }
         } else {
             $success = '✅ Thank you! Your message has been saved. We will contact you soon.';
         }
