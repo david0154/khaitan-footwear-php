@@ -22,6 +22,9 @@ $categories = $pdo->query($categoriesQuery)->fetchAll();
 // Get featured products
 $products = $pdo->query("SELECT p.*, c.name as category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE p.is_featured = 1 AND p.status = 'active' LIMIT 8")->fetchAll();
 
+// Get new arrivals (latest 8 products)
+$newArrivals = $pdo->query("SELECT p.*, c.name as category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE p.status = 'active' ORDER BY p.created_at DESC LIMIT 8")->fetchAll();
+
 $tagline = $settings['site_tagline'] ?? 'Leading Manufacturer of Quality Footwear';
 $about_text = $settings['home_about'] ?? 'We are one of the leading footwear manufacturers in India, offering stylish, comfortable and durable products.';
 
@@ -70,6 +73,61 @@ $hero_button_link = $settings['hero_button_link'] ?? 'products.php';
         </div>
     </div>
 </section>
+
+<!-- New Arrivals Section -->
+<?php if (!empty($newArrivals)): ?>
+<section class="py-20 bg-gradient-to-b from-white to-gray-50">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-16">
+            <span class="inline-block px-6 py-2 bg-red-100 text-red-600 rounded-full font-bold text-sm uppercase mb-4">✨ Fresh Stock</span>
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">New Arrivals</h2>
+            <p class="text-xl text-gray-600">Discover our latest footwear collection</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <?php foreach ($newArrivals as $na): ?>
+            <div class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:-translate-y-2 relative">
+                <!-- New Badge -->
+                <div class="absolute top-4 right-4 z-10">
+                    <span class="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                        🆕 NEW
+                    </span>
+                </div>
+                
+                <div class="aspect-square bg-gray-100 overflow-hidden flex items-center justify-center p-4">
+                    <?php if ($na['primary_image']): ?>
+                    <img src="uploads/products/<?= htmlspecialchars($na['primary_image']) ?>" 
+                         alt="<?= htmlspecialchars($na['article_code']) ?>" 
+                         class="w-full h-full object-contain group-hover:scale-110 transition duration-500">
+                    <?php else: ?>
+                    <svg class="w-20 h-20 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <?php endif; ?>
+                </div>
+                
+                <div class="p-6">
+                    <span class="text-sm font-semibold text-red-600 uppercase"><?= htmlspecialchars($na['category_name']) ?></span>
+                    <h3 class="text-xl font-bold text-gray-800 mt-2 mb-2">Art. <?= htmlspecialchars($na['article_code']) ?></h3>
+                    <?php if ($na['sizes']): ?>
+                    <p class="text-gray-600 text-sm mb-4">👟 Sizes: <?= htmlspecialchars($na['sizes']) ?></p>
+                    <?php endif; ?>
+                    <a href="product.php?slug=<?= $na['slug'] ?>" class="inline-block bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2 rounded-full font-semibold hover:from-green-700 hover:to-green-800 transition">
+                        View Details
+                    </a>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        
+        <div class="text-center mt-12">
+            <a href="products.php" class="inline-block bg-gradient-to-r from-green-600 to-green-700 text-white px-12 py-4 rounded-full text-xl font-bold hover:from-green-700 hover:to-green-800 transform hover:scale-105 transition shadow-xl">
+                👀 View All New Arrivals
+            </a>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
 
 <!-- About Section -->
 <section class="py-20 bg-white">
@@ -201,7 +259,7 @@ function nextCategory() {
     if (currentCategory < maxIndex) {
         currentCategory++;
     } else {
-        currentCategory = 0; // Loop back to start
+        currentCategory = 0;
     }
     updateCarousel();
 }
@@ -210,7 +268,7 @@ function prevCategory() {
     if (currentCategory > 0) {
         currentCategory--;
     } else {
-        currentCategory = maxIndex; // Loop to end
+        currentCategory = maxIndex;
     }
     updateCarousel();
 }
@@ -220,12 +278,10 @@ function goToCategory(index) {
     updateCarousel();
 }
 
-// Auto-rotate every 3 seconds
 let autoRotate = setInterval(() => {
     nextCategory();
 }, 3000);
 
-// Pause auto-rotate on hover
 const carousel = document.getElementById('categoryCarousel');
 carousel.addEventListener('mouseenter', () => {
     clearInterval(autoRotate);
@@ -237,10 +293,8 @@ carousel.addEventListener('mouseleave', () => {
     }, 3000);
 });
 
-// Initialize
 updateCarousel();
 
-// Responsive: Adjust visible slides
 function updateResponsive() {
     const width = window.innerWidth;
     if (width < 768) {
@@ -267,7 +321,11 @@ updateResponsive();
 <?php if (!empty($products)): ?>
 <section class="py-20 bg-white">
     <div class="container mx-auto px-6">
-        <h2 class="text-4xl md:text-5xl font-bold text-center text-gray-800 mb-16">Featured Products</h2>
+        <div class="text-center mb-16">
+            <span class="inline-block px-6 py-2 bg-orange-100 text-orange-600 rounded-full font-bold text-sm uppercase mb-4">⭐ Trending</span>
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Featured Products</h2>
+            <p class="text-xl text-gray-600">Our most popular footwear selection</p>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <?php foreach ($products as $p): ?>
             <div class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:-translate-y-2 <?= $p['is_featured'] ? 'featured-product' : '' ?>">
