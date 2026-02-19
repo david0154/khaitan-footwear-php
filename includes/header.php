@@ -43,6 +43,7 @@ $show_social = !empty($settings['show_social_media']);
         
         .khaitan-word {
             font-family: 'KhaitanCustom', Arial, sans-serif;
+            letter-spacing: -2px;
         }
     </style>
 </head>
