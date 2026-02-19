@@ -85,7 +85,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <main class="flex-1">
             <header class="bg-white shadow px-6 py-4">
                 <h1 class="text-2xl font-bold text-gray-900">🎨 Branding & Social Media</h1>
-                <p class="text-gray-600">Manage your brand identity, tagline, logo, favicon and social media links</p>
+                <p class="text-gray-600">Manage your brand identity, logo, favicon and social media</p>
             </header>
             
             <div class="p-6">
@@ -113,7 +113,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                        value="<?= htmlspecialchars($settings['site_name'] ?? 'Khaitan Footwear') ?>" 
                                        required
                                        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500">
-                                <p class="text-sm text-gray-600 mt-1">Displayed in header, title, and throughout site</p>
+                                <p class="text-sm text-gray-600 mt-1">Displayed in header and throughout the website</p>
                             </div>
                             
                             <div>
@@ -122,39 +122,66 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                        value="<?= htmlspecialchars($settings['site_tagline'] ?? '') ?>" 
                                        placeholder="e.g., Quality Footwear Since 1990"
                                        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500">
-                                <p class="text-sm text-gray-600 mt-1">Shows below company name in header and in browser title</p>
+                                <p class="text-sm text-gray-600 mt-1">Shows below company name in header</p>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Logo & Favicon -->
+                    <!-- Company Logo -->
                     <div class="bg-white rounded-lg shadow p-6">
-                        <h2 class="text-xl font-bold mb-4">🖼️ Logo & Favicon</h2>
+                        <h2 class="text-xl font-bold mb-4">🖼️ Company Logo</h2>
+                        <p class="text-gray-600 mb-4">Upload your company logo (shows in website header next to company name)</p>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block mb-2 font-medium">Company Logo</label>
-                                <input type="file" name="site_logo" accept="image/*" class="w-full px-4 py-3 border rounded-lg">
-                                <p class="text-sm text-gray-600 mt-1">PNG recommended, max 500KB. Shows in header next to company name.</p>
-                                <?php if (!empty($settings['site_logo'])): ?>
-                                <div class="mt-3 p-4 bg-gray-50 rounded border">
-                                    <p class="text-sm font-semibold mb-2">Current Logo:</p>
-                                    <img src="../uploads/<?= htmlspecialchars($settings['site_logo']) ?>" class="h-16 w-auto object-contain">
-                                </div>
-                                <?php endif; ?>
-                            </div>
+                        <div>
+                            <label class="block mb-2 font-medium">Upload Logo Image</label>
+                            <input type="file" name="site_logo" accept="image/*" 
+                                   class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500">
+                            <p class="text-sm text-gray-600 mt-1">Recommended: PNG with transparent background, 200x80 pixels, max 500KB</p>
                             
-                            <div>
-                                <label class="block mb-2 font-medium">Favicon (Browser Icon) ⭐</label>
-                                <input type="file" name="site_favicon" accept="image/*,.ico" class="w-full px-4 py-3 border rounded-lg">
-                                <p class="text-sm text-gray-600 mt-1">ICO or PNG, 32x32 or 64x64 pixels. Shows in browser tab.</p>
-                                <?php if (!empty($settings['site_favicon'])): ?>
-                                <div class="mt-3 p-4 bg-gray-50 rounded border">
-                                    <p class="text-sm font-semibold mb-2">Current Favicon:</p>
-                                    <img src="../uploads/<?= htmlspecialchars($settings['site_favicon']) ?>" class="h-8 w-8 object-contain border">
+                            <?php if (!empty($settings['site_logo'])): ?>
+                            <div class="mt-4 p-4 bg-gray-50 rounded border">
+                                <p class="text-sm font-semibold mb-3 text-gray-700">📌 Current Logo:</p>
+                                <div class="bg-white p-4 rounded border-2 border-gray-200 inline-block">
+                                    <img src="../uploads/<?= htmlspecialchars($settings['site_logo']) ?>" 
+                                         alt="Company Logo" 
+                                         class="h-20 w-auto object-contain">
                                 </div>
-                                <?php endif; ?>
+                                <p class="text-xs text-gray-500 mt-2">Upload a new image to replace this logo</p>
                             </div>
+                            <?php else: ?>
+                            <div class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded">
+                                <p class="text-sm text-yellow-800">⚠️ No logo uploaded yet. Upload one to display in header.</p>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Favicon (Browser Icon) -->
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h2 class="text-xl font-bold mb-4">⭐ Favicon (Browser Tab Icon)</h2>
+                        <p class="text-gray-600 mb-4">Upload favicon - the small icon that appears in browser tabs and bookmarks</p>
+                        
+                        <div>
+                            <label class="block mb-2 font-medium">Upload Favicon</label>
+                            <input type="file" name="site_favicon" accept="image/*,.ico" 
+                                   class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500">
+                            <p class="text-sm text-gray-600 mt-1">Recommended: ICO or PNG format, 32x32 or 64x64 pixels, max 100KB</p>
+                            
+                            <?php if (!empty($settings['site_favicon'])): ?>
+                            <div class="mt-4 p-4 bg-gray-50 rounded border">
+                                <p class="text-sm font-semibold mb-3 text-gray-700">📌 Current Favicon:</p>
+                                <div class="bg-white p-4 rounded border-2 border-gray-200 inline-block">
+                                    <img src="../uploads/<?= htmlspecialchars($settings['site_favicon']) ?>" 
+                                         alt="Favicon" 
+                                         class="h-8 w-8 object-contain">
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">Upload a new icon to replace this favicon</p>
+                            </div>
+                            <?php else: ?>
+                            <div class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded">
+                                <p class="text-sm text-yellow-800">⚠️ No favicon uploaded yet. Upload one to display in browser tabs.</p>
+                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     
