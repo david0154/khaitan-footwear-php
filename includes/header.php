@@ -27,8 +27,20 @@ $show_social = !empty($settings['show_social_media']);
     <link rel="icon" type="image/x-icon" href="/uploads/<?= htmlspecialchars($site_favicon) ?>">
     <link rel="shortcut icon" type="image/x-icon" href="/uploads/<?= htmlspecialchars($site_favicon) ?>">
     <?php endif; ?>
+    
+    <!-- Google Fonts - Gumball Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gumball&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/assets/css/featured-blink.css">
+    
+    <style>
+        .gumball-font {
+            font-family: 'Gumball', cursive;
+        }
+    </style>
 </head>
 <body class="bg-gray-50">
 <!-- Top Bar -->
@@ -93,11 +105,11 @@ $show_social = !empty($settings['show_social_media']);
                     <img src="/uploads/<?= htmlspecialchars($site_logo) ?>" alt="<?= htmlspecialchars($site_name) ?> Logo" class="h-14 w-auto object-contain">
                     <?php endif; ?>
                     
-                    <!-- Company Name + Tagline -->
+                    <!-- Company Name + Tagline with Gumball Font -->
                     <div class="flex flex-col">
-                        <span class="text-2xl font-bold text-red-600 leading-tight"><?= htmlspecialchars($site_name) ?></span>
+                        <span class="text-2xl font-bold text-red-600 leading-tight gumball-font"><?= htmlspecialchars($site_name) ?></span>
                         <?php if ($site_tagline): ?>
-                        <span class="text-xs text-gray-600 italic"><?= htmlspecialchars($site_tagline) ?></span>
+                        <span class="text-xs text-gray-600 italic uppercase tracking-wider"><?= htmlspecialchars($site_tagline) ?></span>
                         <?php endif; ?>
                     </div>
                 </a>
