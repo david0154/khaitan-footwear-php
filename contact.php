@@ -163,7 +163,7 @@ $site_country = $settings['site_country'] ?? 'India';
                     <h3 class="text-2xl font-bold text-gray-900 mb-6">Visit Our Factory</h3>
                     <div class="aspect-video bg-gray-200 rounded-lg overflow-hidden">
                         <iframe 
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d224345.83923192776!2d77.06889754725782!3d28.52758200617607!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd5b347eb62d%3A0x52c2b7494e204dce!2sNew%20Delhi%2C%20Delhi!5e0!3m2!1sen!2sin!4v1645000000000!5m2!1sen!2sin" 
+                            src="https://www.google.com/maps?q=Fides+Footwear+Private+Limited,Kolkata,West+Bengal,India&output=embed" 
                             width="100%" 
                             height="100%" 
                             style="border:0;" 
