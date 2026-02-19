@@ -1,5 +1,6 @@
 <?php
 require_once 'includes/header.php';
+require_once 'includes/mailer.php';
 
 $success = '';
 $error = '';
@@ -12,13 +13,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $message = $_POST['message'] ?? '';
     
     try {
+        // Save to database
         $stmt = $pdo->prepare("INSERT INTO contacts (name, email, phone, company, message) VALUES (?, ?, ?, ?, ?)");
         $stmt->execute([$name, $email, $phone, $company, $message]);
-        $success = 'Thank you! Your message has been sent successfully. We will contact you soon.';
         
-        // TODO: Send email notification
+        // Prepare contact data
+        $contactData = [
+            'name' => htmlspecialchars($name),
+            'email' => htmlspecialchars($email),
+            'phone' => htmlspecialchars($phone),
+            'company' => htmlspecialchars($company),
+            'message' => nl2br(htmlspecialchars($message))
+        ];
+        
+        // Send email notification to admin
+        $adminNotified = notifyAdminNewContact($contactData);
+        
+        // Send confirmation email to customer
+        $customerNotified = sendContactConfirmation($contactData);
+        
+        if ($adminNotified && $customerNotified) {
+            $success = '✅ Thank you! Your message has been sent successfully. We will contact you soon. Check your email for confirmation.';
+        } elseif ($adminNotified) {
+            $success = '✅ Thank you! Your message has been sent to our team. We will contact you soon.';
+        } else {
+            $success = '✅ Thank you! Your message has been saved. We will contact you soon.';
+        }
+        
     } catch (Exception $e) {
-        $error = 'Sorry, there was an error sending your message. Please try again.';
+        error_log('Contact form error: ' . $e->getMessage());
+        $error = 'Sorry, there was an error sending your message. Please try again or call us directly.';
     }
 }
 
@@ -96,7 +120,7 @@ $site_country = $settings['site_country'] ?? 'India';
                 
                 <?php if ($success): ?>
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
-                    ✅ <?= htmlspecialchars($success) ?>
+                    <?= $success ?>
                 </div>
                 <?php endif; ?>
                 
