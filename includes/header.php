@@ -32,7 +32,7 @@ $show_social = !empty($settings['show_social_media']);
     <link rel="stylesheet" href="/assets/css/featured-blink.css">
     
     <style>
-        /* Custom Khaitan Font */
+        /* Custom Khaitan Font - Multiple format support */
         @font-face {
             font-family: 'KhaitanCustom';
             src: url('/assets/KhaitanCustom.ttf') format('truetype');
@@ -42,7 +42,15 @@ $show_social = !empty($settings['show_social_media']);
         }
         
         .khaitan-custom-font {
-            font-family: 'KhaitanCustom', sans-serif;
+            font-family: 'KhaitanCustom', 'Arial', sans-serif !important;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Debug font loading */
+        @supports (font-variation-settings: normal) {
+            .khaitan-custom-font {
+                font-family: 'KhaitanCustom', 'Arial', sans-serif;
+            }
         }
     </style>
 </head>
@@ -149,5 +157,13 @@ $show_social = !empty($settings['show_social_media']);
 function toggleMobileMenu() {
     const menu = document.getElementById('mobileMenu');
     menu.classList.toggle('hidden');
+}
+
+// Debug font loading
+if (document.fonts && document.fonts.check) {
+    document.fonts.ready.then(function() {
+        console.log('Custom font loading status:');
+        console.log('KhaitanCustom loaded:', document.fonts.check('1em KhaitanCustom'));
+    });
 }
 </script>
