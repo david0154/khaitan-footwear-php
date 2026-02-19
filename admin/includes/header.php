@@ -33,14 +33,42 @@ body { font-family: 'Inter', sans-serif; }
 Dashboard
 </a>
 
-<a href="analytics.php" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition <?= basename($_SERVER['PHP_SELF']) == 'analytics.php' ? 'bg-gradient-to-r from-red-600 to-red-800' : '' ?>">
-<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-Analytics
+<div class="px-4 py-2">
+<p class="text-xs uppercase text-gray-400 font-semibold">Website Content</p>
+</div>
+
+<a href="branding-settings.php" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition <?= basename($_SERVER['PHP_SELF']) == 'branding-settings.php' ? 'bg-gradient-to-r from-red-600 to-red-800' : '' ?>">
+<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+Logo & Favicon
 </a>
+
+<a href="hero-banner.php" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition <?= basename($_SERVER['PHP_SELF']) == 'hero-banner.php' ? 'bg-gradient-to-r from-red-600 to-red-800' : '' ?>">
+<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+Hero Banner
+</a>
+
+<a href="contact-info.php" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition <?= basename($_SERVER['PHP_SELF']) == 'contact-info.php' ? 'bg-gradient-to-r from-red-600 to-red-800' : '' ?>">
+<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+Contact Info
+</a>
+
+<a href="tagline-settings.php" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition <?= basename($_SERVER['PHP_SELF']) == 'tagline-settings.php' ? 'bg-gradient-to-r from-red-600 to-red-800' : '' ?>">
+<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+Tagline & About
+</a>
+
+<div class="px-4 py-2 mt-4">
+<p class="text-xs uppercase text-gray-400 font-semibold">Products & Categories</p>
+</div>
 
 <a href="products.php" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition <?= basename($_SERVER['PHP_SELF']) == 'products.php' || basename($_SERVER['PHP_SELF']) == 'product-edit.php' ? 'bg-gradient-to-r from-red-600 to-red-800' : '' ?>">
 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
 Products
+</a>
+
+<a href="product-upload.php" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition <?= basename($_SERVER['PHP_SELF']) == 'product-upload.php' ? 'bg-gradient-to-r from-red-600 to-red-800' : '' ?>">
+<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+Upload Products
 </a>
 
 <a href="categories.php" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition <?= basename($_SERVER['PHP_SELF']) == 'categories.php' ? 'bg-gradient-to-r from-red-600 to-red-800' : '' ?>">
@@ -53,9 +81,13 @@ Categories
 Banners
 </a>
 
+<div class="px-4 py-2 mt-4">
+<p class="text-xs uppercase text-gray-400 font-semibold">Inquiries & Users</p>
+</div>
+
 <a href="contacts.php" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition <?= basename($_SERVER['PHP_SELF']) == 'contacts.php' ? 'bg-gradient-to-r from-red-600 to-red-800' : '' ?>">
 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-Contacts
+Inquiries
 </a>
 
 <a href="users.php" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition <?= basename($_SERVER['PHP_SELF']) == 'users.php' ? 'bg-gradient-to-r from-red-600 to-red-800' : '' ?>">
@@ -63,26 +95,28 @@ Contacts
 Users
 </a>
 
-<div class="border-t border-gray-700 my-4"></div>
+<div class="px-4 py-2 mt-4">
+<p class="text-xs uppercase text-gray-400 font-semibold">System</p>
+</div>
 
-<a href="tagline-settings.php" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition <?= basename($_SERVER['PHP_SELF']) == 'tagline-settings.php' ? 'bg-gradient-to-r from-red-600 to-red-800' : '' ?>">
-<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-Tagline & Content
+<a href="updates.php" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition <?= basename($_SERVER['PHP_SELF']) == 'updates.php' ? 'bg-gradient-to-r from-red-600 to-red-800' : '' ?>">
+<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+Updates
 </a>
 
-<a href="logo-settings.php" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition <?= basename($_SERVER['PHP_SELF']) == 'logo-settings.php' ? 'bg-gradient-to-r from-red-600 to-red-800' : '' ?>">
-<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-Logo & Branding
+<a href="github-settings.php" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition <?= basename($_SERVER['PHP_SELF']) == 'github-settings.php' ? 'bg-gradient-to-r from-red-600 to-red-800' : '' ?>">
+<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+GitHub Settings
 </a>
 
 <a href="email-settings.php" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition <?= basename($_SERVER['PHP_SELF']) == 'email-settings.php' ? 'bg-gradient-to-r from-red-600 to-red-800' : '' ?>">
 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-Email Settings
+Email Config
 </a>
 
 <a href="settings.php" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition <?= basename($_SERVER['PHP_SELF']) == 'settings.php' ? 'bg-gradient-to-r from-red-600 to-red-800' : '' ?>">
 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-Settings
+General Settings
 </a>
 </nav>
 </div>
