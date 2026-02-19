@@ -1,6 +1,12 @@
 <?php
 require_once 'includes/header.php';
-require_once '../includes/mailer.php';
+
+// Try to load simple mailer
+$emailEnabled = false;
+if (file_exists('../includes/mailer-simple.php')) {
+    require_once '../includes/mailer-simple.php';
+    $emailEnabled = true;
+}
 
 $success = '';
 $error = '';
@@ -10,7 +16,7 @@ if (isset($_POST['update_status'])) {
     $success = 'Status updated';
 }
 
-if (isset($_POST['send_reply'])) {
+if (isset($_POST['send_reply']) && $emailEnabled) {
     $contact_id = $_POST['contact_id'];
     $reply_message = $_POST['reply_message'];
     $subject = $_POST['subject'];
@@ -21,7 +27,6 @@ if (isset($_POST['send_reply'])) {
     $contact = $stmt->fetch();
     
     if ($contact) {
-        global $settings;
         $siteName = $settings['site_name'] ?? 'Khaitan Footwear';
         $sitePhone = $settings['site_phone'] ?? '';
         $siteEmail = $settings['site_email'] ?? '';
@@ -36,7 +41,6 @@ if (isset($_POST['send_reply'])) {
                 .header { background: linear-gradient(135deg, #dc2626 0%, #ea580c 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
                 .content { background: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
                 .message-box { background: #f0f9ff; padding: 20px; border-left: 4px solid #0ea5e9; margin: 20px 0; }
-                .footer { text-align: center; margin-top: 20px; padding: 20px; background: #f5f5f5; border-radius: 10px; color: #666; }
             </style>
         </head>
         <body>
@@ -63,9 +67,6 @@ if (isset($_POST['send_reply'])) {
                     <p style='margin-top: 30px;'>Best regards,<br>
                     <strong>{$siteName} Team</strong></p>
                 </div>
-                <div class='footer'>
-                    <p style='margin: 0;'>This email was sent in response to your inquiry.</p>
-                </div>
             </div>
         </body>
         </html>
@@ -77,7 +78,7 @@ if (isset($_POST['send_reply'])) {
             $pdo->prepare("UPDATE contacts SET status = 'replied' WHERE id = ?")->execute([$contact_id]);
             $success = '✅ Reply sent successfully to ' . htmlspecialchars($contact['email']);
         } else {
-            $error = '❌ Failed to send email. Please check SMTP settings.';
+            $error = '❌ Failed to send email. Please check your server mail configuration.';
         }
     }
 }
@@ -131,7 +132,9 @@ $contacts = $pdo->query("SELECT * FROM contacts ORDER BY created_at DESC")->fetc
 </td>
 <td class="px-6 py-4 space-x-2">
 <button onclick="viewMessage(<?= htmlspecialchars(json_encode($c)) ?>)" class="text-blue-600 hover:text-blue-800 font-semibold">👁️ View</button>
+<?php if ($emailEnabled): ?>
 <button onclick="showReplyForm(<?= htmlspecialchars(json_encode($c)) ?>)" class="text-green-600 hover:text-green-800 font-semibold">✉️ Reply</button>
+<?php endif; ?>
 </td>
 </tr>
 <?php endforeach; ?>
@@ -157,6 +160,7 @@ $contacts = $pdo->query("SELECT * FROM contacts ORDER BY created_at DESC")->fetc
 </div>
 </div>
 
+<?php if ($emailEnabled): ?>
 <!-- Reply Modal -->
 <div id="replyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="if(event.target === this) this.classList.add('hidden')">
 <div class="bg-white rounded-lg p-8 max-w-3xl w-full mx-4 max-h-screen overflow-y-auto">
@@ -193,6 +197,7 @@ Cancel
 </form>
 </div>
 </div>
+<?php endif; ?>
 
 <script>
 function viewMessage(contact) {
@@ -206,6 +211,7 @@ function viewMessage(contact) {
     document.getElementById('messageModal').classList.remove('hidden');
 }
 
+<?php if ($emailEnabled): ?>
 function showReplyForm(contact) {
     document.getElementById('reply_contact_id').value = contact.id;
     document.getElementById('reply_to_name').textContent = contact.name;
@@ -214,6 +220,7 @@ function showReplyForm(contact) {
     document.getElementById('reply_subject').value = 'Re: Your inquiry at Khaitan Footwear';
     document.getElementById('replyModal').classList.remove('hidden');
 }
+<?php endif; ?>
 </script>
 
 <?php require_once 'includes/footer.php'; ?>
