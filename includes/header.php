@@ -16,6 +16,11 @@ $site_favicon = $settings['site_favicon'] ?? '';
 $site_name = $settings['site_name'] ?? 'Khaitan Footwear';
 $site_tagline = $settings['site_tagline'] ?? '';
 $show_social = !empty($settings['show_social_media']);
+
+// Split site name into first word and rest for custom font
+$name_parts = explode(' ', $site_name, 2);
+$first_word = $name_parts[0];
+$rest_words = isset($name_parts[1]) ? ' ' . $name_parts[1] : '';
 ?>
 <!DOCTYPE html>
 <html>
@@ -110,10 +115,10 @@ $show_social = !empty($settings['show_social_media']);
                     <img src="/uploads/<?= htmlspecialchars($site_logo) ?>" alt="<?= htmlspecialchars($site_name) ?> Logo" class="h-14 w-auto object-contain">
                     <?php endif; ?>
                     
-                    <!-- Company Name + Tagline -->
+                    <!-- Company Name + Tagline (Dynamic from Admin) -->
                     <div class="flex flex-col">
                         <span class="text-2xl font-bold text-red-600 leading-tight">
-                            <span class="khaitan-word">Khaitan</span> Footwear
+                            <span class="khaitan-word"><?= htmlspecialchars($first_word) ?></span><?= htmlspecialchars($rest_words) ?>
                         </span>
                         <?php if ($site_tagline): ?>
                         <span class="text-xs text-gray-600 italic uppercase tracking-wider"><?= htmlspecialchars($site_tagline) ?></span>
