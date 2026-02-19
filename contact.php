@@ -24,12 +24,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $site_phone = $settings['site_phone'] ?? '+91 98765 43210';
 $site_phone_2 = $settings['site_phone_2'] ?? '';
-$site_email = $settings['site_email'] ?? 'info@khaitanfootwear.in';
+$site_email = $settings['site_email'] ?? 'admin@test.kaitan.in';
 $site_email_sales = $settings['site_email_sales'] ?? '';
-$site_address = $settings['site_address'] ?? 'Industrial Area, Phase 2';
-$site_city = $settings['site_city'] ?? 'New Delhi';
-$site_state = $settings['site_state'] ?? 'Delhi';
-$site_pincode = $settings['site_pincode'] ?? '110001';
+$site_address = $settings['site_address'] ?? 'test';
+$site_city = $settings['site_city'] ?? 'kolkata';
+$site_state = $settings['site_state'] ?? 'West bengal';
+$site_pincode = $settings['site_pincode'] ?? '700000';
 $site_country = $settings['site_country'] ?? 'India';
 ?>
 
