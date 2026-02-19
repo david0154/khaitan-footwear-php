@@ -167,24 +167,24 @@ $hero_button_link = $settings['hero_button_link'] ?? 'products.php';
         <!-- Carousel Container -->
         <div class="relative">
             <!-- Previous Button -->
-            <button onclick="prevCategory()" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-red-600 hover:text-white text-gray-800 rounded-full p-4 shadow-xl transition transform hover:scale-110">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button id="prevBtn" onclick="prevCategory()" class="absolute left-0 md:left-4 top-1/2 -translate-y-1/2 z-20 bg-white hover:bg-red-600 hover:text-white text-gray-800 rounded-full p-3 md:p-4 shadow-xl transition transform hover:scale-110 touch-manipulation">
+                <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
             </button>
             
             <!-- Next Button -->
-            <button onclick="nextCategory()" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-red-600 hover:text-white text-gray-800 rounded-full p-4 shadow-xl transition transform hover:scale-110">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button id="nextBtn" onclick="nextCategory()" class="absolute right-0 md:right-4 top-1/2 -translate-y-1/2 z-20 bg-white hover:bg-red-600 hover:text-white text-gray-800 rounded-full p-3 md:p-4 shadow-xl transition transform hover:scale-110 touch-manipulation">
+                <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                 </svg>
             </button>
             
             <!-- Carousel Items -->
-            <div id="categoryCarousel" class="overflow-hidden">
+            <div id="categoryCarousel" class="overflow-hidden touch-pan-y">
                 <div id="categoryTrack" class="flex transition-transform duration-500 ease-in-out">
                     <?php foreach ($categories as $cat): ?>
-                    <div class="category-slide flex-shrink-0 px-4" style="width: 25%;">
+                    <div class="category-slide flex-shrink-0 px-2 md:px-4" style="width: 100%;">
                         <a href="products.php?category=<?= $cat['slug'] ?>" class="group block">
                             <div class="relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition transform hover:-translate-y-2">
                                 <?php if ($cat['sample_image']): ?>
@@ -225,7 +225,7 @@ $hero_button_link = $settings['hero_button_link'] ?? 'products.php';
             <!-- Dots Indicator -->
             <div class="flex justify-center mt-8 space-x-2">
                 <?php for ($i = 0; $i < count($categories); $i++): ?>
-                <button onclick="goToCategory(<?= $i ?>)" class="category-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-red-600 transition" data-index="<?= $i ?>"></button>
+                <button onclick="goToCategory(<?= $i ?>)" class="category-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-red-600 transition touch-manipulation" data-index="<?= $i ?>"></button>
                 <?php endfor; ?>
             </div>
         </div>
@@ -235,8 +235,30 @@ $hero_button_link = $settings['hero_button_link'] ?? 'products.php';
 <script>
 let currentCategory = 0;
 const totalCategories = <?= count($categories) ?>;
-const visibleSlides = 4;
-const maxIndex = Math.max(0, totalCategories - visibleSlides);
+let visibleSlides = 1;
+let maxIndex = Math.max(0, totalCategories - visibleSlides);
+
+function updateResponsive() {
+    const width = window.innerWidth;
+    if (width < 768) {
+        visibleSlides = 1;
+        document.querySelectorAll('.category-slide').forEach(slide => {
+            slide.style.width = '100%';
+        });
+    } else if (width < 1024) {
+        visibleSlides = 2;
+        document.querySelectorAll('.category-slide').forEach(slide => {
+            slide.style.width = '50%';
+        });
+    } else {
+        visibleSlides = 4;
+        document.querySelectorAll('.category-slide').forEach(slide => {
+            slide.style.width = '25%';
+        });
+    }
+    maxIndex = Math.max(0, totalCategories - visibleSlides);
+    currentCategory = Math.min(currentCategory, maxIndex);
+}
 
 function updateCarousel() {
     const track = document.getElementById('categoryTrack');
@@ -278,11 +300,36 @@ function goToCategory(index) {
     updateCarousel();
 }
 
+// Touch/Swipe support for mobile
+let touchStartX = 0;
+let touchEndX = 0;
+const carousel = document.getElementById('categoryCarousel');
+
+carousel.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+}, {passive: true});
+
+carousel.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+}, {passive: true});
+
+function handleSwipe() {
+    const swipeThreshold = 50;
+    if (touchStartX - touchEndX > swipeThreshold) {
+        // Swiped left - go next
+        nextCategory();
+    }
+    if (touchEndX - touchStartX > swipeThreshold) {
+        // Swiped right - go prev
+        prevCategory();
+    }
+}
+
 let autoRotate = setInterval(() => {
     nextCategory();
 }, 3000);
 
-const carousel = document.getElementById('categoryCarousel');
 carousel.addEventListener('mouseenter', () => {
     clearInterval(autoRotate);
 });
@@ -293,27 +340,18 @@ carousel.addEventListener('mouseleave', () => {
     }, 3000);
 });
 
-updateCarousel();
+// Pause auto-rotate on touch
+carousel.addEventListener('touchstart', () => {
+    clearInterval(autoRotate);
+}, {passive: true});
 
-function updateResponsive() {
-    const width = window.innerWidth;
-    if (width < 768) {
-        document.querySelectorAll('.category-slide').forEach(slide => {
-            slide.style.width = '100%';
-        });
-    } else if (width < 1024) {
-        document.querySelectorAll('.category-slide').forEach(slide => {
-            slide.style.width = '50%';
-        });
-    } else {
-        document.querySelectorAll('.category-slide').forEach(slide => {
-            slide.style.width = '25%';
-        });
-    }
-}
+window.addEventListener('resize', () => {
+    updateResponsive();
+    updateCarousel();
+});
 
-window.addEventListener('resize', updateResponsive);
 updateResponsive();
+updateCarousel();
 </script>
 <?php endif; ?>
 
