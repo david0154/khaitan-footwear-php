@@ -79,7 +79,7 @@ $hero_button_link = $settings['hero_button_link'] ?? 'products.php';
 <section class="py-20 bg-gradient-to-b from-white to-gray-50">
     <div class="container mx-auto px-6">
         <div class="text-center mb-16">
-            <span class="inline-block px-6 py-2 bg-red-100 text-red-600 rounded-full font-bold text-sm uppercase mb-4">✨ Fresh Stock</span>
+            <span class="inline-block px-6 py-2 bg-red-100 text-red-600 rounded-full font-bold text-sm uppercase mb-4">Fresh Stock</span>
             <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">New Arrivals</h2>
             <p class="text-xl text-gray-600">Discover our latest footwear collection</p>
         </div>
@@ -90,7 +90,7 @@ $hero_button_link = $settings['hero_button_link'] ?? 'products.php';
                 <!-- New Badge -->
                 <div class="absolute top-4 right-4 z-10">
                     <span class="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                        🆕 NEW
+                        NEW
                     </span>
                 </div>
                 
@@ -110,7 +110,7 @@ $hero_button_link = $settings['hero_button_link'] ?? 'products.php';
                     <span class="text-sm font-semibold text-red-600 uppercase"><?= htmlspecialchars($na['category_name']) ?></span>
                     <h3 class="text-xl font-bold text-gray-800 mt-2 mb-2">Art. <?= htmlspecialchars($na['article_code']) ?></h3>
                     <?php if ($na['sizes']): ?>
-                    <p class="text-gray-600 text-sm mb-4">👟 Sizes: <?= htmlspecialchars($na['sizes']) ?></p>
+                    <p class="text-gray-600 text-sm mb-4">ðŸ‘Ÿ Sizes: <?= htmlspecialchars($na['sizes']) ?></p>
                     <?php endif; ?>
                     <a href="product.php?slug=<?= $na['slug'] ?>" class="inline-block bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2 rounded-full font-semibold hover:from-green-700 hover:to-green-800 transition">
                         View Details
@@ -122,7 +122,7 @@ $hero_button_link = $settings['hero_button_link'] ?? 'products.php';
         
         <div class="text-center mt-12">
             <a href="products.php" class="inline-block bg-gradient-to-r from-green-600 to-green-700 text-white px-12 py-4 rounded-full text-xl font-bold hover:from-green-700 hover:to-green-800 transform hover:scale-105 transition shadow-xl">
-                👀 View All New Arrivals
+                View All New Arrivals
             </a>
         </div>
     </div>
@@ -360,7 +360,7 @@ updateCarousel();
 <section class="py-20 bg-white">
     <div class="container mx-auto px-6">
         <div class="text-center mb-16">
-            <span class="inline-block px-6 py-2 bg-orange-100 text-orange-600 rounded-full font-bold text-sm uppercase mb-4">⭐ Trending</span>
+            <span class="inline-block px-6 py-2 bg-orange-100 text-orange-600 rounded-full font-bold text-sm uppercase mb-4">Trending</span>
             <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Featured Products</h2>
             <p class="text-xl text-gray-600">Our most popular footwear selection</p>
         </div>
