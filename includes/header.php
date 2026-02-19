@@ -32,7 +32,7 @@ $show_social = !empty($settings['show_social_media']);
     <link rel="stylesheet" href="/assets/css/featured-blink.css">
     
     <style>
-        /* Custom Khaitan Font - Multiple format support */
+        /* Custom Khaitan Font */
         @font-face {
             font-family: 'KhaitanCustom';
             src: url('/assets/KhaitanCustom.ttf') format('truetype');
@@ -41,16 +41,8 @@ $show_social = !empty($settings['show_social_media']);
             font-display: swap;
         }
         
-        .khaitan-custom-font {
-            font-family: 'KhaitanCustom', 'Arial', sans-serif !important;
-            letter-spacing: 0.5px;
-        }
-        
-        /* Debug font loading */
-        @supports (font-variation-settings: normal) {
-            .khaitan-custom-font {
-                font-family: 'KhaitanCustom', 'Arial', sans-serif;
-            }
+        .khaitan-word {
+            font-family: 'KhaitanCustom', Arial, sans-serif;
         }
     </style>
 </head>
@@ -117,9 +109,11 @@ $show_social = !empty($settings['show_social_media']);
                     <img src="/uploads/<?= htmlspecialchars($site_logo) ?>" alt="<?= htmlspecialchars($site_name) ?> Logo" class="h-14 w-auto object-contain">
                     <?php endif; ?>
                     
-                    <!-- Company Name + Tagline with Custom Khaitan Font -->
+                    <!-- Company Name + Tagline -->
                     <div class="flex flex-col">
-                        <span class="text-2xl font-bold text-red-600 leading-tight khaitan-custom-font"><?= htmlspecialchars($site_name) ?></span>
+                        <span class="text-2xl font-bold text-red-600 leading-tight">
+                            <span class="khaitan-word">Khaitan</span> Footwear
+                        </span>
                         <?php if ($site_tagline): ?>
                         <span class="text-xs text-gray-600 italic uppercase tracking-wider"><?= htmlspecialchars($site_tagline) ?></span>
                         <?php endif; ?>
@@ -157,13 +151,5 @@ $show_social = !empty($settings['show_social_media']);
 function toggleMobileMenu() {
     const menu = document.getElementById('mobileMenu');
     menu.classList.toggle('hidden');
-}
-
-// Debug font loading
-if (document.fonts && document.fonts.check) {
-    document.fonts.ready.then(function() {
-        console.log('Custom font loading status:');
-        console.log('KhaitanCustom loaded:', document.fonts.check('1em KhaitanCustom'));
-    });
 }
 </script>
