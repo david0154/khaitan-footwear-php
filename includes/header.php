@@ -16,6 +16,11 @@ $site_favicon = $settings['site_favicon'] ?? '';
 $site_name = $settings['site_name'] ?? 'Khaitan Footwear';
 $site_tagline = $settings['site_tagline'] ?? '';
 $show_social = !empty($settings['show_social_media']);
+
+// Split site name into first word and rest
+$name_parts = explode(' ', $site_name, 2);
+$first_word = $name_parts[0];
+$rest_words = isset($name_parts[1]) ? ' ' . $name_parts[1] : '';
 ?>
 <!DOCTYPE html>
 <html>
@@ -32,25 +37,11 @@ $show_social = !empty($settings['show_social_media']);
     <link rel="stylesheet" href="/assets/css/featured-blink.css">
     
     <style>
-        /* Custom Khaitan Font - Multiple format support */
-        @font-face {
-            font-family: 'KhaitanCustom';
-            src: url('/assets/KhaitanCustom.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
-        }
-        
-        .khaitan-custom-font {
-            font-family: 'KhaitanCustom', 'Arial', sans-serif !important;
-            letter-spacing: 10px;
-        }
-        
-        /* Debug font loading */
-        @supports (font-variation-settings: normal) {
-            .khaitan-custom-font {
-                font-family: 'KhaitanCustom', 'Arial', sans-serif;
-            }
+        .khaitan-svg-logo {
+            height: 28px;
+            width: auto;
+            display: inline-block;
+            vertical-align: middle;
         }
     </style>
 </head>
@@ -117,9 +108,11 @@ $show_social = !empty($settings['show_social_media']);
                     <img src="/uploads/<?= htmlspecialchars($site_logo) ?>" alt="<?= htmlspecialchars($site_name) ?> Logo" class="h-14 w-auto object-contain">
                     <?php endif; ?>
                     
-                    <!-- Company Name + Tagline with Custom Khaitan Font -->
+                    <!-- Company Name + Tagline (SVG Logo + Text) -->
                     <div class="flex flex-col">
-                        <span class="text-2xl font-bold text-red-600 leading-tight khaitan-custom-font"><?= htmlspecialchars($site_name) ?></span>
+                        <span class="text-2xl font-bold text-red-600 leading-tight flex items-center gap-1">
+                            <img src="/assets/khaitan.svg" alt="<?= htmlspecialchars($first_word) ?>" class="khaitan-svg-logo"><?= htmlspecialchars($rest_words) ?>
+                        </span>
                         <?php if ($site_tagline): ?>
                         <span class="text-xs text-gray-600 italic uppercase tracking-wider"><?= htmlspecialchars($site_tagline) ?></span>
                         <?php endif; ?>
@@ -157,13 +150,5 @@ $show_social = !empty($settings['show_social_media']);
 function toggleMobileMenu() {
     const menu = document.getElementById('mobileMenu');
     menu.classList.toggle('hidden');
-}
-
-// Debug font loading
-if (document.fonts && document.fonts.check) {
-    document.fonts.ready.then(function() {
-        console.log('Custom font loading status:');
-        console.log('KhaitanCustom loaded:', document.fonts.check('1em KhaitanCustom'));
-    });
 }
 </script>
